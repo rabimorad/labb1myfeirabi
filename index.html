@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elbil Förutsägelse</title>
+</head>
+<body>
+    <h1>Förutsägelse: kan jag äga en Elbil?</h1>
+    <form id="predictionForm">
+        <label for="age">Ålder:</label>
+        <input type="number" id="age" required><br><br>
+
+        <label for="income">Inkomst:</label>
+        <input type="number" id="income" required><br><br>
+
+        <button type="submit">Skicka</button>
+    </form>
+
+    <h2>Förutsägelse Resultat:</h2>
+    <p id="result">Väntar på input...</p>
+
+    <script>
+        // Hämta formuläret och resultatområdet
+        const form = document.getElementById('predictionForm');
+        const resultElement = document.getElementById('result');
+
+        // Event listener för formulärsubmission
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Förhindra formulärets standardåtgärd (reload av sidan)
+
+            // Hämta inmatad ålder och inkomst
+            const age = parseInt(document.getElementById('age').value);
+            const income = parseInt(document.getElementById('income').value);
+
+            // Visa en laddningsindikator
+            resultElement.textContent = 'Laddar förutsägelse...';
+
+            // Skicka POST-förfrågan till backend
+            try {
+                const response = await fetch('http://localhost:5000/predict-tfjs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ age, income })
+                });
+
+                // Kontrollera om svaret är OK
+                if (!response.ok) {
+                    throw new Error('Något gick fel vid serverkommunikation');
+                }
+
+                const data = await response.json();
+                if (data.prediction !== undefined) {
+                    // Visa resultatet beroende på förutsägelsen
+                    if (data.prediction > 0.5) {
+                        resultElement.textContent = 'Grattis du kan äga en elbil!';
+                    } else {
+                        resultElement.textContent = 'Ledsen men du måste jobba hårdare för att äga en elbil.';
+                    }
+                } else {
+                    resultElement.textContent = 'Kunde inte hämta resultat.';
+                }
+            } catch (error) {
+                console.error("Fel vid förutsägelse:", error);
+                resultElement.textContent = 'Något gick fel vid förutsägelsen.';
+            }
+        });
+    </script>
+</body>
+</html>
