@@ -16,3 +16,6 @@ Invoke-RestMethod -Uri http://localhost:5000/predict-tfjs -Method Post -Headers 
 Du kan testa olika värden för age och income för att få olika resultat från servern.
 
 Synkronisering med index.html: index.html är synkad med servern, så du kan mata in data direkt i webbläsaren och skicka värden för att få ett resultat.
+
+
+https://htmlpreview.github.io/?https://github.com/rabimorad/labb1myfeirabi/blob/main/index.html
